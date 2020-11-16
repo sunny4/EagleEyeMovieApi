@@ -42,6 +42,12 @@ namespace EagleEyeMovieApi.Controllers
         {
         }
 
+        [HttpPost("metadata")]
+        public ActionResult Add([FromBody]MetaDataInstance movieData)
+        {
+            Repository.AddMetaData(movieData);
+            return Ok();
+        }
 
         // PUT api/<MovieController>/5
         [HttpPut("metadata")]

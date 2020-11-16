@@ -32,6 +32,11 @@ namespace EagleEyeMovieApi.Data
             return MovieMetaData;
         }
 
+        public void AddMetaData(MetaDataInstance metaDataInstance)
+        {
+
+        }
+
         private void LoadCsvData()
         {
             try
