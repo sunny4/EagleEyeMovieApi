@@ -2,17 +2,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace EagleEyeMovieApi.Data
 {
+
     public class Repository
     {
+        [DataMember]
         private List<MetaDataInstance> MetaData { get; set; }
 
         public Repository()
         {
             LoadCsvData();
+        }
+
+        private int NextId()
+        {
+            return MetaData.Max(x => x.Id) + 1;
         }
 
         public List<MetaDataInstance> GetAll(int movieId)
@@ -27,14 +35,15 @@ namespace EagleEyeMovieApi.Data
                 .OrderByDescending(x => x.Id) // Put's last changed film/language instance at top
                 .GroupBy(x => new { x.MovieId, x.Language })
                 .Select(x => x.FirstOrDefault())
-                .ToList();            
+                .ToList();
 
             return MovieMetaData;
         }
 
         public void AddMetaData(MetaDataInstance metaDataInstance)
         {
-
+            metaDataInstance.Id = NextId();
+            MetaData.Add(metaDataInstance);
         }
 
         private void LoadCsvData()

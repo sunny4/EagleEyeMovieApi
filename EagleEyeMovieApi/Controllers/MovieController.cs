@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,17 +14,12 @@ namespace EagleEyeMovieApi.Controllers
     [ApiController]
     public class MovieController : ControllerBase
     {
-        private Repository Repository { get; set; }
+        private static Repository Repository { get; set; }
+
         public MovieController()
         {
-            Repository = new Repository();
-        }
-
-        // GET: api/<MovieController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
+            if (Repository == null) 
+                Repository = new Repository();
         }
 
         [HttpGet("metadata/{movieId}")]
@@ -34,12 +30,6 @@ namespace EagleEyeMovieApi.Controllers
             if (MovieMetaData == null || MovieMetaData.Count == 0) return NotFound();
 
             return MovieMetaData;
-        }
-
-        // POST api/<MovieController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
         }
 
         [HttpPost("metadata")]
