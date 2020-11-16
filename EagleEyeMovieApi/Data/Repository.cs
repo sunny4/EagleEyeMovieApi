@@ -8,11 +8,28 @@ namespace EagleEyeMovieApi.Data
 {
     public class Repository
     {
-        public List<MetaDataInstance> MetaData { get; set; }
+        private List<MetaDataInstance> MetaData { get; set; }
 
         public Repository()
         {
             LoadCsvData();
+        }
+
+        public List<MetaDataInstance> GetAll(int movieId)
+        {
+            return MetaData;
+        }
+
+        public List<MetaDataInstance> GetMovieData(int movieId)
+        {
+            List<MetaDataInstance> MovieMetaData = MetaData
+                .Where(x => x.MovieId == movieId)
+                .OrderByDescending(x => x.Id) // Put's last changed film/language instance at top
+                .GroupBy(x => new { x.MovieId, x.Language })
+                .Select(x => x.FirstOrDefault())
+                .ToList();            
+
+            return MovieMetaData;
         }
 
         private void LoadCsvData()

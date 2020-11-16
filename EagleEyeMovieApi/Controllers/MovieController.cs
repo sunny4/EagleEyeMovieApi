@@ -29,13 +29,7 @@ namespace EagleEyeMovieApi.Controllers
         [HttpGet("metadata/{movieId}")]
         public ActionResult<List<MetaDataInstance>> Get(int movieId)
         {
-
-            List<MetaDataInstance> MovieMetaData = Repository.MetaData
-                .Where(x => x.MovieId == movieId)
-                .OrderByDescending(x => x.Id) // Put's last changed film/language instance at top
-                .GroupBy(x => new { x.MovieId, x.Language })
-                .Select(x => x.FirstOrDefault())
-                .ToList();
+            List<MetaDataInstance> MovieMetaData = Repository.GetMovieData(movieId);
 
             if (MovieMetaData == null || MovieMetaData.Count == 0) return NotFound();
 
@@ -48,8 +42,9 @@ namespace EagleEyeMovieApi.Controllers
         {
         }
 
+
         // PUT api/<MovieController>/5
-        [HttpPut("{id}")]
+        [HttpPut("metadata")]
         public void Put(int id, [FromBody] string value)
         {
         }
