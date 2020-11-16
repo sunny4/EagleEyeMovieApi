@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EagleEyeMovieApi.Data;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,12 @@ namespace EagleEyeMovieApi.Controllers
     [ApiController]
     public class MovieController : ControllerBase
     {
+        private Repository Repository { get; set; }
+        public MovieController()
+        {
+            Repository = new Repository();
+        }
+
         // GET: api/<MovieController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -19,11 +26,20 @@ namespace EagleEyeMovieApi.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<MovieController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("metadata/{movieId}")]
+        public ActionResult<List<MetaDataInstance>> Get(int movieId)
         {
-            return "value";
+
+            List<MetaDataInstance> MovieMetaData = Repository.MetaData
+                .Where(x => x.MovieId == movieId)
+                .OrderByDescending(x => x.Id) // Put's last changed film/language instance at top
+                .GroupBy(x => new { x.MovieId, x.Language })
+                .Select(x => x.FirstOrDefault())
+                .ToList();
+
+            if (MovieMetaData == null || MovieMetaData.Count == 0) return NotFound();
+
+            return MovieMetaData;
         }
 
         // POST api/<MovieController>
