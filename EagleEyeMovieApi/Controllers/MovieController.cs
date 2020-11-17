@@ -32,13 +32,13 @@ namespace EagleEyeMovieApi.Controllers
             return MovieMetaData;
         }
 
-        //[HttpGet("stats")]
-        //public ActionResult<List<MetaDataInstance>> GetStats()
-        //{
-        //    //List<MetaDataInstance> MovieMetaData = Repository.GetMovieData();
+        [HttpGet("stats")]
+        public ActionResult<List<MovieStatisticsInstance>> GetStats()
+        {
+            List<MovieStatisticsInstance> MovieMetaData = Repository.GetMovieStats();
 
-        //   // return "";// MovieMetaData;
-        //}
+            return MovieMetaData;
+        }
 
         [HttpPost("metadata")]
         public ActionResult Add([FromBody]MovieMetaDataInstance movieData)

@@ -19,16 +19,44 @@ namespace EagleEyeMovieApi.Data
             LoadCsvStatsData();
         }
 
+        public List<MovieStatisticsInstance> GetMovieStats(string language = "EN")
+        {
+            List<StatsDataInstance> summarisedStats = StatsData.GroupBy(x => x.MovieId)
+                                       .Select(x => new StatsDataInstance
+                                       {
+                                           MovieId = x.First().MovieId,
+                                           WatchDurationMs = x.Sum(x => x.WatchDurationMs),
+                                           MovieWatchCount = x.Count(),
+                                           AverageWatchTimeS = (int)(x.Sum(x => x.WatchDurationMs) / x.Count()) / 1000
+                                       }).ToList();
+
+            List<MovieStatisticsInstance> AllMovieStats = new List<MovieStatisticsInstance>();
+            foreach (StatsDataInstance movieStatsSummary in summarisedStats)
+            {
+                MovieMetaDataInstance movieData = GetMovieData(movieStatsSummary.MovieId).Where(x => x.Language == language).FirstOrDefault();
+                if (movieData != null)
+                {
+                    MovieStatisticsInstance m = new MovieStatisticsInstance();
+                    m.MovieId = movieStatsSummary.MovieId;
+                    m.Title = movieData.Title;
+                    m.AverageWatchDurationS = movieStatsSummary.AverageWatchTimeS;
+                    m.Watches = movieStatsSummary.MovieWatchCount;
+                    m.ReleaseYear = movieData.ReleaseYear;
+                    AllMovieStats.Add(m);
+                }
+            }
+            return AllMovieStats;
+        }
+
         private int NextId()
         {
             return MetaData.Max(x => x.Id) + 1;
         }
 
-        public List<MovieMetaDataInstance> GetAll()
+        public List<MovieMetaDataInstance> GetAllMovieData()
         {
             return MetaData;
         }
-        
 
         public List<MovieMetaDataInstance> GetMovieData(int movieId)
         {

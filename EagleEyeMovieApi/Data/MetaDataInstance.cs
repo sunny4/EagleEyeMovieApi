@@ -18,6 +18,8 @@ namespace EagleEyeMovieApi.Data
     public class StatsDataInstance
     {
         public int MovieId { get; set; }
-        public int WatchDurationMs { get; set; }
+        public long WatchDurationMs { get; set; }
+        public int MovieWatchCount { get; set; }
+        public int AverageWatchTimeS { get; set; }
     }
 }
