@@ -23,17 +23,25 @@ namespace EagleEyeMovieApi.Controllers
         }
 
         [HttpGet("metadata/{movieId}")]
-        public ActionResult<List<MetaDataInstance>> Get(int movieId)
+        public ActionResult<List<MovieMetaDataInstance>> Get(int movieId)
         {
-            List<MetaDataInstance> MovieMetaData = Repository.GetMovieData(movieId);
+            List<MovieMetaDataInstance> MovieMetaData = Repository.GetMovieData(movieId);
 
             if (MovieMetaData == null || MovieMetaData.Count == 0) return NotFound();
 
             return MovieMetaData;
         }
 
+        //[HttpGet("stats")]
+        //public ActionResult<List<MetaDataInstance>> GetStats()
+        //{
+        //    //List<MetaDataInstance> MovieMetaData = Repository.GetMovieData();
+
+        //   // return "";// MovieMetaData;
+        //}
+
         [HttpPost("metadata")]
-        public ActionResult Add([FromBody]MetaDataInstance movieData)
+        public ActionResult Add([FromBody]MovieMetaDataInstance movieData)
         {
             Repository.AddMetaData(movieData);
             return Ok();

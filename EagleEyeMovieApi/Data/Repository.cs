@@ -10,12 +10,13 @@ namespace EagleEyeMovieApi.Data
 
     public class Repository
     {
-        [DataMember]
-        private List<MetaDataInstance> MetaData { get; set; }
+        private List<MovieMetaDataInstance> MetaData { get; set; }
+        private List<StatsDataInstance> StatsData { get; set; }
 
         public Repository()
         {
-            LoadCsvData();
+            LoadCsvMovieData();
+            LoadCsvStatsData();
         }
 
         private int NextId()
@@ -23,14 +24,15 @@ namespace EagleEyeMovieApi.Data
             return MetaData.Max(x => x.Id) + 1;
         }
 
-        public List<MetaDataInstance> GetAll(int movieId)
+        public List<MovieMetaDataInstance> GetAll()
         {
             return MetaData;
         }
+        
 
-        public List<MetaDataInstance> GetMovieData(int movieId)
+        public List<MovieMetaDataInstance> GetMovieData(int movieId)
         {
-            List<MetaDataInstance> MovieMetaData = MetaData
+            List<MovieMetaDataInstance> MovieMetaData = MetaData
                 .Where(x => x.MovieId == movieId)
                 .OrderByDescending(x => x.Id) // Put's last changed film/language instance at top
                 .GroupBy(x => new { x.MovieId, x.Language })
@@ -40,17 +42,17 @@ namespace EagleEyeMovieApi.Data
             return MovieMetaData;
         }
 
-        public void AddMetaData(MetaDataInstance metaDataInstance)
+        public void AddMetaData(MovieMetaDataInstance metaDataInstance)
         {
             metaDataInstance.Id = NextId();
             MetaData.Add(metaDataInstance);
         }
 
-        private void LoadCsvData()
+        private void LoadCsvMovieData()
         {
             try
             {
-                MetaData = new List<MetaDataInstance>();
+                MetaData = new List<MovieMetaDataInstance>();
                 TextFieldParser parser = new TextFieldParser("Data\\MovieData\\metadata.csv");
                 parser.HasFieldsEnclosedInQuotes = true;
                 parser.SetDelimiters(",");
@@ -61,7 +63,7 @@ namespace EagleEyeMovieApi.Data
                     lineNumber++;
                     if (lineNumber > 1 && fields.Length == 6) //check all data fields are present (ignore non-present data)
                     {
-                        MetaDataInstance metaDataInstance = new MetaDataInstance();
+                        MovieMetaDataInstance metaDataInstance = new MovieMetaDataInstance();
                         metaDataInstance.Id = Convert.ToInt32(fields[0]);
                         metaDataInstance.MovieId = Convert.ToInt32(fields[1]);
                         metaDataInstance.Title = Convert.ToString(fields[2]);
@@ -70,6 +72,33 @@ namespace EagleEyeMovieApi.Data
                         metaDataInstance.ReleaseYear = Convert.ToInt32(fields[5]);
 
                         MetaData.Add(metaDataInstance);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        private void LoadCsvStatsData()
+        {
+            try
+            {
+                StatsData = new List<StatsDataInstance>();
+                TextFieldParser parser = new TextFieldParser("Data\\MovieData\\stats.csv");
+                parser.SetDelimiters(",");
+                int lineNumber = 0;
+                while (!parser.EndOfData)
+                {
+                    string[] fields = parser.ReadFields();
+                    lineNumber++;
+                    if (lineNumber > 1 && fields.Length == 2) //check all data fields are present (ignore non-present data)
+                    {
+                        StatsDataInstance StatsInstance = new StatsDataInstance();
+                        StatsInstance.MovieId = Convert.ToInt32(fields[0]);
+                        StatsInstance.WatchDurationMs = Convert.ToInt32(fields[1]);
+                        StatsData.Add(StatsInstance);
                     }
                 }
             }
