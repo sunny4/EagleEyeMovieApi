@@ -33,15 +33,15 @@ namespace EagleEyeMovieApi.Data
             List<MovieStatisticsInstance> AllMovieStats = new List<MovieStatisticsInstance>();
             foreach (StatsDataInstance movieStatsSummary in summarisedStats)
             {
-                MovieMetaDataInstance movieData = GetMovieData(movieStatsSummary.MovieId).Where(x => x.Language == language).FirstOrDefault();
-                if (movieData != null)
+                MovieMetaDataInstance movieInfo = GetMovieData(movieStatsSummary.MovieId).Where(x => x.Language == language).FirstOrDefault();
+                if (movieInfo != null)
                 {
                     MovieStatisticsInstance m = new MovieStatisticsInstance();
                     m.MovieId = movieStatsSummary.MovieId;
-                    m.Title = movieData.Title;
+                    m.Title = movieInfo.Title;
                     m.AverageWatchDurationS = movieStatsSummary.AverageWatchTimeS;
                     m.Watches = movieStatsSummary.MovieWatchCount;
-                    m.ReleaseYear = movieData.ReleaseYear;
+                    m.ReleaseYear = movieInfo.ReleaseYear;
                     AllMovieStats.Add(m);
                 }
             }

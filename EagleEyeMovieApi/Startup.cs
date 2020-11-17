@@ -1,3 +1,4 @@
+using EagleEyeMovieApi.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,9 +16,11 @@ namespace EagleEyeMovieApi
 {
     public class Startup
     {
+        public static Repository StartUpRepo { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            StartUpRepo = new Repository();
         }
 
         public IConfiguration Configuration { get; }
